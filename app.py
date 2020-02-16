@@ -1,10 +1,10 @@
 import smtplib
 import json
 from chalice import Chalice, CORSConfig
-from chalicelib.config import SMTP_USERNAME, SMTP_PASSWORD
+from chalicelib.utils import send_email, TEST_MESSAGE
 
 app = Chalice(app_name='lambda_survey')
-s = smtplib.SMTP()
+smtp_client = smtplib.SMTP()
 cors_config = CORSConfig(
         allow_origin="*",
         allow_headers=["X-Special-Header", "X-Requested-With"],
@@ -13,34 +13,23 @@ cors_config = CORSConfig(
         allow_credentials=True
     )
 
-# tony@tecnometro.net
-# aldo.gatica.gt@gmail.com
 
-
-@app.route('/survey', cors=cors_config, methods=['GET'])
+@app.route('/', cors=cors_config, methods=['GET'])
 def index():
-    s.connect('email-smtp.us-east-1.amazonaws.com', 587)
-    s.starttls()
-    s.login(SMTP_USERNAME, SMTP_PASSWORD)
-    message = 'From: aldogatica123@gmail.com\nTo: tony@tecnometro.net\nSubject: Lambda Survey\n\n' \
-              'Esta es una prueba'
-    s.sendmail('aldogatica123@gmail.com', 'tony@tecnometro.net', message)
-    return {'message': 'Correo enviado'}
+    return {'message': 'Survey notification service online'}
 
 
-# @app.route('/survey', cors=cors_config, methods=['POST'])
-# def post_survey():
-#     body = app.current_request.json_body
-#     s.connect('email-smtp.us-east-1.amazonaws.com', 587)
-#     s.starttls()
-#     s.login(SMTP_USERNAME, SMTP_PASSWORD)
-#     message = 'From: aldogatica123@gmail.com\nTo: aldo.gatica.gt@gmail.com\nSubject: Resultados de la Encuesta\n\n' \
-#               'Contenido de la encuenta: ' + json.dumps(body)
-#     s.sendmail('aldogatica123@gmail.com', 'aldo.gatica.gt@gmail.com', message)
-#     return {'message': 'Correo enviado'}
+@app.route('/test', cors=cors_config, methods=['POST'])
+def test_email():
+    body = app.current_request.json_body
+    print(body)
+    if body['payload'] == 'Test payload':
+        return send_email(smtp_client, TEST_MESSAGE)
+    else:
+        return {'message': 'Incorrect test payload'}
 
 
-@app.route('/survey', cors=cors_config, methods=['POST'])
+@app.route('/notify', cors=cors_config, methods=['POST'])
 def post_survey():
     body = app.current_request.json_body
     print(body)
