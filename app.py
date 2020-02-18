@@ -1,6 +1,6 @@
 import smtplib
 from chalice import Chalice, CORSConfig
-from chalicelib.tools import send_email, format_profile
+from chalicelib.tools import send_email, format_profile, format_slider_results
 from chalicelib.utils import TEST_MESSAGE
 
 app = Chalice(app_name='lambda_survey')
@@ -24,7 +24,7 @@ def post_survey():
     body = app.current_request.json_body
     print(body)
     # return send_email(smtp_client, format_message(body))
-    message = format_profile(body)
+    message = format_profile(body['profile']) + format_slider_results(body['sliders'])
     return message
 
 
