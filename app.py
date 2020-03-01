@@ -1,17 +1,18 @@
 import smtplib
 from chalice import Chalice, CORSConfig
-from chalicelib.tools import send_email, format_profile, format_slider_results
+from chalicelib.tools import send_email, format_profile, format_slider_results, \
+    format_feedback, format_contact
 from chalicelib.utils import TEST_MESSAGE
 
 app = Chalice(app_name='lambda_survey')
 smtp_server = smtplib.SMTP()
 cors_config = CORSConfig(
-        allow_origin="*",
-        allow_headers=["X-Special-Header", "X-Requested-With"],
-        max_age=600,
-        expose_headers=["X-Special-Header"],
-        allow_credentials=True
-    )
+    allow_origin="*",
+    allow_headers=["X-Special-Header", "X-Requested-With"],
+    max_age=600,
+    expose_headers=["X-Special-Header"],
+    allow_credentials=True
+)
 
 
 @app.route('/', cors=cors_config, methods=['GET'])
@@ -23,9 +24,10 @@ def index():
 def post_survey():
     body = app.current_request.json_body
     print(body)
-    # return send_email(smtp_client, format_message(body))
-    message = format_profile(body['profile']) + format_slider_results(body['sliders'])
+    message = format_profile(body['profile']) + format_slider_results(body['results']) \
+              + format_feedback(body['feedback']) + format_contact(body['contact'])
     return message
+    # return send_email(smtp_client, format_message(body))
 
 
 @app.route('/test', cors=cors_config, methods=['POST'])

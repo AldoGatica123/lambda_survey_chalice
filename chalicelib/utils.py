@@ -33,3 +33,33 @@ value_map = {
     2: 'Malo',
     1: 'Muy malo',
 }
+
+score_map = {
+    'very_good': 'Muy bueno',
+    'good': 'Bueno',
+    'regular': 'Regular',
+    'bad': 'Malo',
+    'very_bad': 'Muy malo',
+}
+
+
+def get_multibutton_values(multibutton):
+    values = ''
+    for item in multibutton:
+        if item['active']:
+            values += item['label'].capitalize() + ' '
+    if values == '':
+        return 'Ninguno'
+    return values
+
+
+def get_biswitch_value(biswitch):
+    return 'Sí' if biswitch['active'] else 'No'
+
+
+
+# "needs_met":{
+#          "on":"Si",
+#          "off":"No",
+#          "active":true
+#       }
