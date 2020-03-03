@@ -1,4 +1,7 @@
 from datetime import datetime
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+
 from chalicelib.config import SMTP_USERNAME, SMTP_PASSWORD, ORIGIN_EMAIL, DESTINATION_EMAIL, EMAIL_SUBJECT
 from chalicelib.utils import profile_map, slider_map, value_map, get_multibutton_values, get_biswitch_value, score_map
 
@@ -7,7 +10,7 @@ def format_slider_results(sliders):
     question_list = 'Resultados:\n'
     for question in sliders.keys():
         question = f'\t{slider_map[question]}: {value_map[sliders[question]]}'
-        question_list = question_list + question + '\n'
+        question_list = question_list + question + '\n\n'
     return question_list
 
 
@@ -51,11 +54,21 @@ def format_contact(contact):
         Email: {contact['email']}
         Telefono: {contact['phone_number']}'''
 
+
 def send_email(server, email_message):
     server.connect('email-smtp.us-east-1.amazonaws.com', 587)
     server.starttls()
     server.login(SMTP_USERNAME, SMTP_PASSWORD)
-    message = f'From: {ORIGIN_EMAIL}\nTo: {DESTINATION_EMAIL}\nSubject: {EMAIL_SUBJECT}\n\n' \
-              f'{email_message}'
-    server.sendmail(ORIGIN_EMAIL, DESTINATION_EMAIL, message)
+
+    message = MIMEMultipart("alternative")
+    message["Subject"] = EMAIL_SUBJECT
+    message["From"] = ORIGIN_EMAIL
+    message["To"] = DESTINATION_EMAIL
+
+    part1 = MIMEText(email_message, "plain")
+    message.attach(part1)
+
+    # message = f'From: {ORIGIN_EMAIL}\nTo: {DESTINATION_EMAIL}\nSubject: {EMAIL_SUBJECT}\n\n' \
+    #           f'{email_message}'
+    server.sendmail(ORIGIN_EMAIL, DESTINATION_EMAIL, message.as_string())
     return {'message': 'Email sent successfully'}

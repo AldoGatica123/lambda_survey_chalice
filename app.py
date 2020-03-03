@@ -26,15 +26,14 @@ def post_survey():
     print(body)
     message = format_profile(body['profile']) + format_slider_results(body['results']) \
               + format_feedback(body['feedback']) + format_contact(body['contact'])
-    return message
-    # return send_email(smtp_client, format_message(body))
+    return send_email(smtp_server, message)
 
 
 @app.route('/test', cors=cors_config, methods=['POST'])
 def test_email():
     body = app.current_request.json_body
     print(body)
-    if body['payload'] == 'Test payload':
+    if 'payload' in body and body['payload'] == 'Test payload':
         return send_email(smtp_server, TEST_MESSAGE)
     else:
         return {'message': 'Incorrect test payload'}

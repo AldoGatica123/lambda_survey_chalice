@@ -3,17 +3,24 @@
 AWS serverless project for notifying by email about the survey results.
 
 
+
 ### Quick Start
 Run locally using:  
 ```bash
 chalice local
 ```
 
+### AWS Profile
+To use the AWS CLI with the corresponding profile use:
+```bash
+export AWS_PROFILE=profile_name
+```
+
 ### Deployment
 Deploy  using:  
 ```bash
 chalice deploy
-chalice deploy --state prod
+chalice deploy --stage prod --profile profile_name
 ```
 
 #### Environment variables
