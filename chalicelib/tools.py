@@ -10,7 +10,7 @@ def format_slider_results(sliders):
     question_list = 'Resultados:\n'
     for question in sliders.keys():
         question = f'\t{slider_map[question]}: {value_map[sliders[question]]}'
-        question_list = question_list + question + '\n\n'
+        question_list = question_list + question + '\n'
     return question_list
 
 
